@@ -70,6 +70,12 @@ class AudioManager {
     return this.unlocked;
   }
 
+  playCustom(sound: string, url: string) {
+    if (!this.enabled || !this.ctx || !this.unlocked) return;
+    const audio = new Audio(url);
+    audio.play().catch(e => console.error("Error playing custom audio:", e));
+  }
+
   play(sound: SoundType) {
     if (!this.enabled || !this.ctx || !this.unlocked) return;
 
@@ -283,4 +289,4 @@ class AudioManager {
 }
 
 // Singleton instance
-export const audioManager = new AudioManager();
+export const audioManager = AudioManager.getInstance();

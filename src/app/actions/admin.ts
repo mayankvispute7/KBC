@@ -3,7 +3,7 @@
 import prisma from '@/lib/prisma';
 import * as bcrypt from 'bcryptjs';
 import type { Question } from '@/lib/types';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 export async function verifyAdminPin(pin: string): Promise<boolean> {
   const settings = await prisma.gameSettings.findFirst();
@@ -46,7 +46,7 @@ export async function saveQuestion(data: Question) {
   const polls = [data.audiencePollA, data.audiencePollB, data.audiencePollC, data.audiencePollD];
   const hasPolls = polls.some(p => p !== null && p !== undefined);
   if (hasPolls) {
-    const sum = polls.reduce((acc, val) => acc + (val || 0), 0);
+    const sum = polls.reduce<number>((acc, val) => acc + (val || 0), 0);
     if (sum !== 100) {
       throw new Error(`Audience poll values must sum to 100 (current sum: ${sum}).`);
     }
@@ -67,8 +67,8 @@ export async function saveQuestion(data: Question) {
     optionB: data.optionB,
     optionC: data.optionC,
     optionD: data.optionD,
-    correctOptions: data.correctOptions,
-    fiftyFiftyRemove: data.fiftyFiftyRemove,
+    correctOptions: data.correctOptions as Prisma.InputJsonValue,
+    fiftyFiftyRemove: data.fiftyFiftyRemove ? (data.fiftyFiftyRemove as Prisma.InputJsonValue) : Prisma.DbNull,
     fiftyFiftyEligible: data.fiftyFiftyEligible,
     timerDuration: data.timerDuration,
     audiencePollA: data.audiencePollA,

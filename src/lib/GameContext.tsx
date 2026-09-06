@@ -22,7 +22,7 @@ interface GameContextValue {
   dispatch: React.Dispatch<GameAction>;
 }
 
-const GameContext = createContext<GameContextValue | null>(null);
+export const GameContext = createContext<GameContextValue | null>(null);
 
 // ─── Provider ────────────────────────────────────────────────────────────────
 

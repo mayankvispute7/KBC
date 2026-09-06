@@ -13,7 +13,7 @@ import * as bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-function generatePollValues(correctOptions: string[]): { A: number; B: number; C: number; D: number } {
+function generatePollValues(correctOptions: string[]): { audiencePollA: number; audiencePollB: number; audiencePollC: number; audiencePollD: number } {
   const options = ['A', 'B', 'C', 'D'];
   const correctLead = Math.floor(Math.random() * 16) + 60; // 60–75%
   let remaining = 100 - correctLead;

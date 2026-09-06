@@ -58,7 +58,7 @@ export default function RootLayout({
     >
       <body className="font-body bg-void text-ink-white antialiased overflow-x-hidden">
         {children}
-        <div className="fixed bottom-2 right-4 text-[11px] text-ink-white/30 font-body z-[100] pointer-events-none select-none tracking-wider">
+        <div className="fixed bottom-4 right-4 text-xs font-semibold text-ink-white/50 font-body z-[999] pointer-events-none select-none tracking-wider mix-blend-screen drop-shadow-md">
           Developed by Mayank Vispute
         </div>
       </body>
