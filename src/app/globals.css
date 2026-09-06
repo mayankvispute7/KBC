@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Kaun Banega College Pati — Global Styles
+ * Premium game-show aesthetic: deep navy backgrounds, gold accents, warm white text.
+ * See Architecture.md §6 for the full design token reference.
+ */
+
+@layer base {
+  /* Force dark backgrounds everywhere — this app is designed for a dark auditorium */
+  html {
+    background-color: #05070D;
+    color: #F6F1E4;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-color: #05070D;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Ensure scrollbar doesn't flash white */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0B0F1F;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2A3352;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #E8C86B;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: rgba(232, 200, 107, 0.3);
+    color: #F6F1E4;
+  }
+}
+
+@layer components {
+  /* Gold gradient text — used for titles, question numbers, state labels */
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #B4903B, #E8C86B, #FFE9A8, #E8C86B, #B4903B);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Animated gold shimmer text */
+  .text-gold-shimmer {
+    background: linear-gradient(90deg, #B4903B, #E8C86B, #FFE9A8, #E8C86B, #B4903B);
+    background-size: 400% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* Gold embossed text effect for major titles */
+  .text-gold-embossed {
+    background: linear-gradient(180deg, #FFE9A8 0%, #E8C86B 40%, #B4903B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 4px rgba(180, 144, 59, 0.5));
+  }
+
+  /* Card base — navy card with gold border hairline */
+  .card-base {
+    @apply bg-navy-light border border-neutral-line rounded-xl;
+    box-shadow: inset 0 1px 0 rgba(232, 200, 107, 0.05);
+  }
+
+  /* Option card states */
+  .option-default {
+    @apply bg-navy-light border border-neutral-line rounded-xl transition-all duration-300;
+  }
+
+  .option-selected {
+    @apply border-gold bg-gradient-to-br from-gold/20 to-gold-deep/10 rounded-xl;
+    box-shadow: 0 0 20px rgba(232, 200, 107, 0.3), inset 0 0 20px rgba(232, 200, 107, 0.1);
+  }
+
+  .option-locked {
+    @apply border-gold-bright bg-gradient-to-br from-gold/25 to-gold-deep/15 rounded-xl;
+    box-shadow: 0 0 40px rgba(232, 200, 107, 0.4), inset 0 0 30px rgba(232, 200, 107, 0.15);
+  }
+
+  .option-correct {
+    @apply border-success bg-gradient-to-br from-success/20 to-success/5 rounded-xl;
+    box-shadow: 0 0 30px rgba(61, 220, 132, 0.4), inset 0 0 20px rgba(61, 220, 132, 0.1);
+  }
+
+  .option-wrong {
+    @apply border-danger bg-gradient-to-br from-danger/20 to-danger/5 rounded-xl;
+    box-shadow: 0 0 30px rgba(232, 91, 91, 0.4), inset 0 0 20px rgba(232, 91, 91, 0.1);
+  }
+
+  .option-eliminated {
+    @apply border-neutral-line/30 bg-navy-light/30 rounded-xl opacity-30;
+  }
+
+  .option-disabled {
+    @apply border-neutral-line/50 bg-navy-light/50 rounded-xl opacity-50;
+  }
+
+  /* Ambient glow for various contexts */
+  .glow-gold {
+    box-shadow: 0 0 40px rgba(232, 200, 107, 0.3);
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 60px rgba(58, 90, 255, 0.2);
+  }
+
+  .glow-success {
+    box-shadow: 0 0 40px rgba(61, 220, 132, 0.3);
+  }
+
+  .glow-danger {
+    box-shadow: 0 0 40px rgba(232, 91, 91, 0.3);
+  }
+
+  /* Vignette overlay — darkens edges for cinematic effect */
+  .vignette {
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 50%,
+      rgba(5, 7, 13, 0.4) 80%,
+      rgba(5, 7, 13, 0.8) 100%
+    );
+  }
+}
+
+@layer utilities {
+  /* Tabular numerals for timer — prevents digit jitter */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Smooth hardware-accelerated transitions */
+  .gpu {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+}

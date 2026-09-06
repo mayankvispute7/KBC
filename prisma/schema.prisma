@@ -1,0 +1,65 @@
+// Kaun Banega College Pati — Prisma Schema
+// See Architecture.md §5 and master brief §11 for the full field list and validation rules.
+//
+// VALIDATION RULES (enforce server-side, not just in admin UI):
+// - correctOptions: at least one correct answer required
+// - fiftyFiftyRemove: must never intersect correctOptions; exactly 2 items or null
+// - audiencePoll values: must sum to 100 if any are set
+// - All four options (A–D) are required, non-empty
+// - questionNumber must be unique
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "sqlite"
+  url       = "file:./dev.db"
+}
+
+model Question {
+  id                 String   @id @default(cuid())
+  questionNumber     Int      @unique
+  questionText       String
+  optionA            String
+  optionB            String
+  optionC            String
+  optionD            String
+  correctOptions     Json     // string[] — e.g. ["D"] or ["A","C"]
+  fiftyFiftyRemove   Json?    // string[] length 0 or 2, must not intersect correctOptions
+  fiftyFiftyEligible Boolean  @default(true)
+  timerDuration      Int      @default(30)
+  audiencePollA      Int?
+  audiencePollB      Int?
+  audiencePollC      Int?
+  audiencePollD      Int?
+  correctMessage     String?
+  wrongMessage       String?
+  enabled            Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model GameSession {
+  id                    String    @id @default(cuid())
+  status                String
+  currentQuestionIndex  Int       @default(0)
+  currentChocolateLevel Int       @default(0)
+  selectedOption        String?
+  lockedOption          String?
+  timerEnd              DateTime?
+  remainingAtPauseMs    Int?
+  usedLifelines         Json
+  fiftyFiftyRemoved     Json?
+  hostNotes             Json?
+  questionSnapshots     Json?     // Snapshot of question content at game start, so mid-event edits don't affect the live session
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model GameSettings {
+  id           String  @id @default(cuid())
+  soundEnabled Boolean @default(true)
+  adminPinHash String
+  soundUrls    Json?
+}
