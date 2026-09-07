@@ -155,8 +155,20 @@ class AudioManager {
     if (!this.heroAudio) {
       this.heroAudio = new Audio('/Sound/Hero.mp3');
     }
+    
+    // Only attempt to play if it's not already playing
+    if (!this.heroAudio.paused && this.heroAudio.currentTime > 0) {
+      return;
+    }
+
     this.heroAudio.currentTime = 0;
     this.heroAudio.play().catch(e => console.warn('Hero sound blocked:', e));
+  }
+
+  stopHeroSound() {
+    if (this.heroAudio) {
+      this.heroAudio.pause();
+    }
   }
 
   startTimerSound() {

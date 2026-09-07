@@ -20,13 +20,28 @@ interface WelcomeSectionProps {
 
 export default function WelcomeSection({ onStart }: WelcomeSectionProps) {
   useEffect(() => {
-    // Attempt to play the hero sound when the component mounts
+    // Attempt to play immediately (usually blocked by browsers)
     audioManager.playHeroSound();
+
+    // Play as soon as user interacts with the page
+    const unlockAudio = () => {
+      audioManager.playHeroSound();
+    };
+
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('keydown', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
+
+    return () => {
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('keydown', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    };
   }, []);
 
   const handleStart = () => {
     audioManager.unlock();
-    audioManager.playHeroSound(); // Ensure it plays if it was blocked before
+    audioManager.stopHeroSound(); // Stop hero sound when starting the game
     audioManager.play('intro');
     onStart();
   };
