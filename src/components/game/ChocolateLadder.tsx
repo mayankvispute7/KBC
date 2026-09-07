@@ -17,7 +17,7 @@ interface ChocolateLadderProps {
 }
 
 export default function ChocolateLadder({ animateReveal = false }: ChocolateLadderProps) {
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
   const currentLevel = state.currentChocolateLevel;
   const currentQuestionLevel = state.currentQuestionIndex + 1;
 
@@ -31,9 +31,10 @@ export default function ChocolateLadder({ animateReveal = false }: ChocolateLadd
         return (
           <motion.div
             key={tier.level}
+            onClick={() => dispatch({ type: 'JUMP_TO_QUESTION', index: tier.level - 1 })}
             className={`
               relative flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-body
-              transition-all duration-500 border
+              transition-all duration-500 border cursor-pointer hover:brightness-125
               ${isCurrent
                 ? 'bg-gold/15 border-gold text-gold-bright shadow-gold font-semibold'
                 : isCompleted

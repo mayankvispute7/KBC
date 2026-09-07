@@ -29,20 +29,27 @@ import { audioManager } from '@/lib/audio';
 
 function PinPrompt({ onSuccess, onClose }: { onSuccess: () => void; onClose: () => void }) {
   const [pin, setPin] = useState('');
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const valid = await verifyAdminPin(pin);
-    setLoading(false);
-    if (valid) {
-      onSuccess();
-    } else {
-      setError(true);
+    setError('');
+    try {
+      const valid = await verifyAdminPin(pin);
+      if (valid) {
+        onSuccess();
+      } else {
+        setError('Incorrect PIN');
+        setPin('');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Verification failed');
       setPin('');
-      setTimeout(() => setError(false), 2000);
+    } finally {
+      setLoading(false);
+      setTimeout(() => setError(''), 4000);
     }
   };
 
@@ -83,7 +90,7 @@ function PinPrompt({ onSuccess, onClose }: { onSuccess: () => void; onClose: () 
             placeholder="• • • •"
           />
           {error && (
-            <p className="mt-2 text-sm text-danger font-body">Incorrect PIN</p>
+            <p className="mt-2 text-sm text-danger font-body text-center">{error}</p>
           )}
           <button
             type="submit"
@@ -752,8 +759,16 @@ export default function AdminPanel() {
         )}
 
         {/* Footer */}
-        <div className="mt-8 text-center text-xs text-neutral-line/50 font-body">
-          Shift+A to close • Changes save automatically
+        <div className="mt-12 flex flex-col items-center gap-4 border-t border-neutral-line/20 pt-8 pb-4">
+          <button
+            onClick={() => dispatch({ type: 'CLOSE_ADMIN' })}
+            className="px-8 py-3 bg-neutral-line/10 border border-neutral-line/30 text-ink-white font-body rounded-xl hover:bg-neutral-line/20 transition-colors shadow-lg"
+          >
+            Close Admin Panel & Return to Game
+          </button>
+          <p className="text-xs text-neutral-line/50 font-body">
+            Shortcut: Press <kbd className="bg-navy border border-neutral-line/30 rounded px-1">Shift+A</kbd> at any time to toggle this panel.
+          </p>
         </div>
       </div>
 

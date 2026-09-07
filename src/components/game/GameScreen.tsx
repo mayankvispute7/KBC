@@ -11,8 +11,9 @@
 
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Settings } from 'lucide-react';
 import { useGame } from '@/lib/GameContext';
 import { getOptionState, isAnswerCorrect } from '@/lib/gameState';
 import { audioManager } from '@/lib/audio';
@@ -29,12 +30,14 @@ import AudiencePollOverlay from '@/components/lifelines/AudiencePollOverlay';
 import AskStudentOverlay from '@/components/lifelines/AskStudentOverlay';
 import StaffroomHotlineOverlay from '@/components/lifelines/StaffroomHotlineOverlay';
 import GrandFinale from '@/components/finale/GrandFinale';
+import GameEditorOverlay from './GameEditorOverlay';
 
 const OPTIONS: OptionLetter[] = ['A', 'B', 'C', 'D'];
 
 export default function GameScreen() {
   const { state, dispatch } = useGame();
   const question = state.questions[state.currentQuestionIndex];
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const handleOptionClick = useCallback((option: OptionLetter) => {
     audioManager.play('optionSelect');
@@ -123,12 +126,27 @@ export default function GameScreen() {
   return (
     <div className="min-h-screen flex relative z-10">
       {/* Chocolate Ladder — Left sidebar */}
-      <div className="hidden lg:flex flex-col justify-center items-center w-[240px] p-4 border-r border-neutral-line/20">
+      <div className="hidden lg:flex flex-col justify-center items-center w-[240px] p-4 border-r border-neutral-line/20 relative">
+        <button 
+          onClick={() => setIsEditorOpen(true)}
+          className="absolute top-4 left-4 p-3 bg-gold text-void rounded-full hover:bg-gold-bright hover:scale-105 transition-all z-20 shadow-[0_0_15px_rgba(232,200,107,0.5)]"
+          title="Edit Game Settings"
+        >
+          <Settings className="w-6 h-6" />
+        </button>
         <ChocolateLadder />
       </div>
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col items-center justify-between p-4 md:p-8 min-h-screen">
+      <div className="flex-1 flex flex-col items-center justify-between p-4 md:p-8 min-h-screen relative">
+        {/* Mobile Settings Button (visible only when sidebar is hidden) */}
+        <button 
+          onClick={() => setIsEditorOpen(true)}
+          className="lg:hidden absolute top-4 left-4 p-3 bg-gold text-void rounded-full hover:bg-gold-bright hover:scale-105 transition-all z-20 shadow-[0_0_15px_rgba(232,200,107,0.5)]"
+          title="Edit Game Settings"
+        >
+          <Settings className="w-6 h-6" />
+        </button>
         {/* Top: Timer */}
         <div className="w-full flex justify-end mb-4">
           <Timer />
@@ -298,6 +316,8 @@ export default function GameScreen() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <GameEditorOverlay isOpen={isEditorOpen} onClose={() => setIsEditorOpen(false)} />
     </div>
   );
 }

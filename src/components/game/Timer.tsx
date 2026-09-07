@@ -32,6 +32,18 @@ export default function Timer() {
     }
   }, [question]);
 
+  // Handle looping timer sound
+  useEffect(() => {
+    if (state.timerRunning) {
+      audioManager.startTimerSound();
+    } else {
+      audioManager.stopTimerSound();
+    }
+    return () => {
+      audioManager.stopTimerSound();
+    };
+  }, [state.timerRunning]);
+
   // RAF-based timer loop
   useEffect(() => {
     if (!state.timerRunning || !state.timerEnd) {

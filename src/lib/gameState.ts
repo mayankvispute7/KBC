@@ -401,6 +401,33 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
+    // ── In-Game Editor ─────────────────────────────────────────────────────
+
+    case 'UPDATE_QUESTION_DATA': {
+      const newQuestions = [...state.questions];
+      newQuestions[action.questionIndex] = action.question;
+      return {
+        ...state,
+        questions: newQuestions,
+      };
+    }
+
+    case 'JUMP_TO_QUESTION': {
+      if (action.index < 0 || action.index >= state.questions.length) return state;
+      return {
+        ...state,
+        currentQuestionIndex: action.index,
+        selectedOption: null,
+        lockedOption: null,
+        timerEnd: null,
+        remainingAtPauseMs: null,
+        timerRunning: false,
+        fiftyFiftyRemoved: null,
+        activeLifeline: null,
+        gameStatus: 'QUESTION',
+      };
+    }
+
     default:
       return state;
   }

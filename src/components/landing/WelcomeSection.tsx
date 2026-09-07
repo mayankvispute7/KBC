@@ -8,6 +8,8 @@
 
 'use client';
 
+import { useEffect } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Sparkles, Clapperboard } from 'lucide-react';
 import { audioManager } from '@/lib/audio';
@@ -17,8 +19,14 @@ interface WelcomeSectionProps {
 }
 
 export default function WelcomeSection({ onStart }: WelcomeSectionProps) {
+  useEffect(() => {
+    // Attempt to play the hero sound when the component mounts
+    audioManager.playHeroSound();
+  }, []);
+
   const handleStart = () => {
     audioManager.unlock();
+    audioManager.playHeroSound(); // Ensure it plays if it was blocked before
     audioManager.play('intro');
     onStart();
   };
@@ -43,14 +51,33 @@ export default function WelcomeSection({ onStart }: WelcomeSectionProps) {
         <Sparkles className="w-16 h-16" />
       </motion.div>
 
-      {/* Main title — word-by-word stagger */}
-      <div className="text-center mb-8 overflow-hidden">
-        <div className="flex flex-wrap justify-center gap-x-4 md:gap-x-6">
+      {/* Main title & Logo — word-by-word stagger */}
+      <div className="text-center mb-8 overflow-hidden flex flex-col items-center">
+        {/* Logo with Shine/Glow Effect */}
+        <motion.div 
+          className="relative mb-6"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: 'easeOut' }}
+        >
+          {/* Radial glow behind logo */}
+          <div className="absolute inset-0 bg-gold/30 blur-[60px] rounded-full scale-150 animate-pulse" />
+          <Image 
+            src="/KBCLOGO.png" 
+            alt="KBC Logo" 
+            width={280} 
+            height={280} 
+            className="relative z-10 drop-shadow-[0_0_20px_rgba(232,200,107,0.5)]"
+            priority
+          />
+        </motion.div>
+
+        <div className="flex flex-wrap justify-center gap-x-3 md:gap-x-4 max-w-4xl">
           {titleWords.map((word, i) => (
             <motion.span
               key={`title-${i}`}
-              className="font-title text-4xl md:text-6xl lg:text-8xl font-black text-gold-embossed"
-              initial={{ y: 100, opacity: 0, rotateX: -90 }}
+              className="font-title text-3xl md:text-5xl lg:text-6xl font-black text-gold-embossed"
+              initial={{ y: 50, opacity: 0, rotateX: -90 }}
               animate={{ y: 0, opacity: 1, rotateX: 0 }}
               transition={{
                 delay: 0.3 + i * 0.15,

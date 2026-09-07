@@ -6,9 +6,14 @@ import type { Question } from '@/lib/types';
 import { Prisma } from '@prisma/client';
 
 export async function verifyAdminPin(pin: string): Promise<boolean> {
-  const settings = await prisma.gameSettings.findFirst();
-  if (!settings) return false;
-  return bcrypt.compare(pin, settings.adminPinHash);
+  try {
+    const settings = await prisma.gameSettings.findFirst();
+    if (!settings) return false;
+    return bcrypt.compare(pin, settings.adminPinHash);
+  } catch (error) {
+    console.error("Prisma Error in verifyAdminPin:", error);
+    throw new Error("Database error. If on Vercel, ensure you are using Postgres.");
+  }
 }
 
 export async function getQuestions() {

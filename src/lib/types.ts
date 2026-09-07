@@ -143,7 +143,9 @@ export type GameAction =
   | { type: 'RESET_GAME' }
   | { type: 'RESTORE_SESSION'; state: Partial<GameState> }
   | { type: 'ENTER_FINALE' }
-  | { type: 'COMPLETE_GAME' };
+  | { type: 'COMPLETE_GAME' }
+  | { type: 'UPDATE_QUESTION_DATA'; questionIndex: number; question: Question }
+  | { type: 'JUMP_TO_QUESTION'; index: number };
 
 // ─── Chocolate Ladder ────────────────────────────────────────────────────────
 

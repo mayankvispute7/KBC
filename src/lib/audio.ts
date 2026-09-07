@@ -35,6 +35,8 @@ class AudioManager {
   private enabled: boolean = true;
   private unlocked: boolean = false;
   private customUrls: Record<string, string> = {};
+  private timerAudio: HTMLAudioElement | null = null;
+  private heroAudio: HTMLAudioElement | null = null;
 
   private constructor() {}
 
@@ -77,7 +79,22 @@ class AudioManager {
   }
 
   play(sound: SoundType) {
-    if (!this.enabled || !this.ctx || !this.unlocked) return;
+    if (!this.enabled) return;
+
+    // Lazily initialize context if not already done (e.g. page refresh)
+    if (!this.ctx && typeof window !== 'undefined') {
+      try {
+        this.ctx = new AudioContext();
+        this.unlocked = true;
+      } catch (e) {
+        console.error("AudioContext creation failed", e);
+      }
+    }
+    if (this.ctx?.state === 'suspended') {
+      this.ctx.resume();
+    }
+
+    if (!this.ctx || !this.unlocked) return;
 
     // Play custom URL if provided
     if (this.customUrls[sound]) {
@@ -129,6 +146,33 @@ class AudioManager {
       case 'nextQuestion':
         this.playNextQuestion();
         break;
+    }
+  }
+
+  playHeroSound() {
+    if (typeof window === 'undefined') return;
+    if (!this.enabled) return;
+    if (!this.heroAudio) {
+      this.heroAudio = new Audio('/Sound/Hero.mp3');
+    }
+    this.heroAudio.currentTime = 0;
+    this.heroAudio.play().catch(e => console.warn('Hero sound blocked:', e));
+  }
+
+  startTimerSound() {
+    if (typeof window === 'undefined') return;
+    if (!this.enabled) return;
+    if (!this.timerAudio) {
+      this.timerAudio = new Audio('/Sound/Timer.mp3');
+      this.timerAudio.loop = true;
+    }
+    this.timerAudio.play().catch(e => console.warn('Timer sound blocked:', e));
+  }
+
+  stopTimerSound() {
+    if (this.timerAudio) {
+      this.timerAudio.pause();
+      this.timerAudio.currentTime = 0;
     }
   }
 
